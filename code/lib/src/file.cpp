@@ -6,6 +6,8 @@
 #include <string>
 #include <cstdlib>
 
+#include <iostream>
+
 namespace cpp { namespace utils {
 
     namespace fs = std::filesystem;
@@ -68,19 +70,31 @@ namespace cpp { namespace utils {
     }
 
     bool file_exists(const std::string& fpath) {
-        return fs::exists( fs::path( fpath.c_str() ) ) && fs::is_regular_file( fs::path(fpath.c_str()) );
+        auto full_fpath = full_resolve_path(fpath);
+        return fs::exists(full_fpath) && (fs::is_regular_file(full_fpath) || fs::is_character_file(full_fpath));
     }
 
     bool directory_exists(const std::string& fpath) {
-        return fs::exists( fs::path( fpath.c_str() ) ) && fs::is_directory( fs::path(fpath.c_str()) );
+        auto full_fpath = full_resolve_path(fpath);
+        return fs::exists( full_fpath ) && fs::is_directory( full_fpath );
     }
 
-    bool create_directories(const std::string& fpath) {
-        return fs::create_directories(fpath.c_str());
+    bool create_directories(const std::string& fpath)
+    {
+        auto path = full_resolve_path(fpath);
+        if ( !fs::exists(path) && !(fs::is_regular_file(path) || fs::is_character_file(path))  )
+        {
+            return fs::create_directories(path);
+        } else if ( fs::exists(path) && fs::is_regular_file(path) || fs::is_character_file(path)  )
+        {
+            return fs::create_directories(path.parent_path());
+        }
+        return false;
     }
 
     bool delete_directories(const std::string& fpath) {
-        return fs::remove_all(fpath.c_str());
+        auto path = full_resolve_path(fpath);
+        return fs::remove_all(path);
     }
 
     bool read_file_contents(const std::string& fpath, std::string& contents, std::ios_base::openmode mode) {
@@ -88,7 +102,8 @@ namespace cpp { namespace utils {
         std::ifstream istream;
         std::stringstream ss;
 
-        istream.open(fpath, mode);
+        auto full_path = full_resolve_path(fpath);
+        istream.open(full_path, mode);
 
         if(!istream.good())
             return false;
@@ -102,7 +117,9 @@ namespace cpp { namespace utils {
 
     bool write_file_contents(const std::string& fpath, const std::string& contents, std::ios_base::openmode mode ) {
         std::ofstream ostream;
-        ostream.open(fpath, mode);
+
+        auto full_path = full_resolve_path(fpath);
+        ostream.open(full_path, mode);
 
         if(!ostream.good())
             return false;

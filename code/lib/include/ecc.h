@@ -26,6 +26,7 @@ namespace cpp {
             bool load_peer_public_key_from_pem(const std::string& pem);
 
             bool load_own_public_key_from_pem(const std::string& pem);
+            bool load_own_public_key_from_pem_file(const std::string& fpath);
             bool load_own_private_key_from_pem_string(const std::string& pem);          // No password callback variant
             bool load_own_private_key_from_pem_string(const std::string& pem, PasswordCallback cb);
             

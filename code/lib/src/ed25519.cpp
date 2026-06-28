@@ -14,6 +14,7 @@
 #include <openssl/sha.h>
 #include <algorithm>
 #include <cstring>
+#include "file.h"
 
 #include "ed25519.h"
 #include "base64.h"
@@ -279,7 +280,9 @@ bool ED25519::set_private_key_pem(const std::string& pem, PasswordCallback cb)
 bool ED25519::export_private_key(const std::string& path)
 {
     if(!ed25519_key_) return false;
-    FILE* f = fopen(path.c_str(), "wb");
+
+    auto fullpath = full_resolve_path(path);
+    FILE* f = fopen(fullpath.c_str(), "wb");
     if(!f) return false;
     bool ok = PEM_write_PrivateKey(f, ed25519_key_, nullptr, nullptr, 0, nullptr, nullptr);
     fclose(f);
@@ -289,7 +292,9 @@ bool ED25519::export_private_key(const std::string& path)
 bool ED25519::export_private_key(const std::string& path, PasswordCallback cb)
 {
     if(!ed25519_key_) return false;
-    FILE* f = fopen(path.c_str(), "wb");
+
+    auto fullpath = full_resolve_path(path);
+    FILE* f = fopen(fullpath.c_str(), "wb");
     if(!f) return false;
 
     PasswordCallbackWrapper wrapper{cb};
@@ -301,7 +306,9 @@ bool ED25519::export_private_key(const std::string& path, PasswordCallback cb)
 bool ED25519::export_public_key(const std::string& path)
 {
     if(!ed25519_key_) return false;
-    FILE* f = fopen(path.c_str(), "wb");
+
+    auto fullpath = full_resolve_path(path);
+    FILE* f = fopen(fullpath.c_str(), "wb");
     if(!f) return false;
     bool ok = PEM_write_PUBKEY(f, ed25519_key_);
     fclose(f);
@@ -310,7 +317,8 @@ bool ED25519::export_public_key(const std::string& path)
 
 bool ED25519::import_private_key(const std::string& path)
 {
-    FILE* f = fopen(path.c_str(), "rb");
+    auto fullpath = full_resolve_path(path);
+    FILE* f = fopen(fullpath.c_str(), "rb");
     if(!f) return false;
     EVP_PKEY* key = PEM_read_PrivateKey(f, nullptr, nullptr, nullptr);
     fclose(f);
@@ -322,7 +330,8 @@ bool ED25519::import_private_key(const std::string& path)
 
 bool ED25519::import_private_key(const std::string& path, PasswordCallback cb)
 {
-    FILE* f = fopen(path.c_str(), "rb");
+    auto fullpath = full_resolve_path(path);
+    FILE* f = fopen(fullpath.c_str(), "rb");
     if(!f) return false;
 
     PasswordCallbackWrapper wrapper{cb};
@@ -336,7 +345,8 @@ bool ED25519::import_private_key(const std::string& path, PasswordCallback cb)
 
 bool ED25519::import_public_key(const std::string& path)
 {
-    FILE* f = fopen(path.c_str(), "rb");
+    auto fullpath = full_resolve_path(path);
+    FILE* f = fopen(fullpath.c_str(), "rb");
     if(!f) return false;
     EVP_PKEY* key = PEM_read_PUBKEY(f, nullptr, nullptr, nullptr);
     fclose(f);

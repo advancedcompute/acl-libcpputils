@@ -71,6 +71,25 @@ bool ECC::load_own_public_key_from_pem(const std::string& pem) {
     return _keypair != nullptr;
 }
 
+bool ECC::load_own_public_key_from_pem_file(const std::string& fpath)
+{
+    std::lock_guard<std::mutex> lock(_lock_mutex);
+
+    auto full_path = full_resolve_path(fpath);
+    if(!file_exists(full_path))
+        return false;
+    
+    FILE* fp = fopen(full_path.c_str(), "rb");
+    if (!fp) return false;
+
+    BIO* bio = BIO_new_fp(fp, BIO_NOCLOSE);
+    _keypair = PEM_read_bio_PUBKEY(bio, nullptr, nullptr, nullptr);
+
+    BIO_free(bio);
+    fclose(fp);
+    return _keypair != nullptr;
+}
+
 bool ECC::load_own_private_key_from_pem_string(const std::string& pem)
 {
     std::lock_guard<std::mutex> lock(_lock_mutex);
@@ -100,7 +119,11 @@ bool ECC::load_own_private_key_from_pem_file(const std::string& fpath)
 {
     std::lock_guard<std::mutex> lock(_lock_mutex);
 
-    FILE* fp = fopen(fpath.c_str(), "rb");
+    auto full_path = full_resolve_path(fpath);
+    if(!file_exists(full_path))
+        return false;
+
+    FILE* fp = fopen(full_path.c_str(), "rb");
     if (!fp) return false;
 
     _keypair = PEM_read_PrivateKey(fp, nullptr, nullptr, nullptr);
@@ -113,7 +136,10 @@ bool ECC::load_own_private_key_from_pem_file(const std::string& fpath, PasswordC
 {
     std::lock_guard<std::mutex> lock(_lock_mutex);
 
-    FILE* fp = fopen(fpath.c_str(), "rb");
+    auto full_path = full_resolve_path(fpath);
+    if(!file_exists(full_path))
+        return false;
+    FILE* fp = fopen(full_path.c_str(), "rb");
     if (!fp) return false;
 
     if(cb)
