@@ -82,12 +82,12 @@ namespace cpp { namespace utils {
     bool create_directories(const std::string& fpath)
     {
         auto path = full_resolve_path(fpath);
-        if ( !fs::exists(path) && !(fs::is_regular_file(path) || fs::is_character_file(path))  )
-        {
-            return fs::create_directories(path);
-        } else if ( fs::exists(path) && fs::is_regular_file(path) || fs::is_character_file(path)  )
+        if ( fs::is_regular_file(path) || fs::is_character_file(path)  )
         {
             return fs::create_directories(path.parent_path());
+        } else if ( fs::is_directory(path)  )
+        {
+            return fs::create_directories(path);
         }
         return false;
     }

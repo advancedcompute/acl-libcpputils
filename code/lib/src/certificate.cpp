@@ -8,6 +8,7 @@
 #include <openssl/evp.h>
 #include <openssl/bio.h>
 #include <openssl/err.h>
+#include "file.h"       // libcpputils
 
 namespace cpp { namespace utils {
 
@@ -108,8 +109,13 @@ bool Certificate::load_from_pem(const std::string& pem, PasswordCallback cb)
     return true;
 }
 
-bool Certificate::load_pem_file(const std::string& path) {
-    FILE* f = fopen(path.c_str(), "rb");
+bool Certificate::load_pem_file(const std::string& path)
+{
+    auto full_path = cpp::utils::full_resolve_path(path);
+    if(!cpp::utils::file_exists(full_path))
+        return false;
+
+    FILE* f = fopen(full_path.c_str(), "rb");
     if (!f) return false;
 
     X509* c = PEM_read_X509(f, nullptr, nullptr, nullptr);
@@ -121,8 +127,12 @@ bool Certificate::load_pem_file(const std::string& path) {
     return true;
 }
 
-bool Certificate::load_pem_file(const std::string& path, PasswordCallback cb) {
-    FILE* f = fopen(path.c_str(), "rb");
+bool Certificate::load_pem_file(const std::string& path, PasswordCallback cb)
+{
+    auto full_path = cpp::utils::full_resolve_path(path);
+    if(!cpp::utils::file_exists(full_path))
+        return false;
+    FILE* f = fopen(full_path.c_str(), "rb");
     if (!f) return false;
 
     PasswordCallbackWrapper wrapper{cb};
@@ -146,7 +156,10 @@ bool Certificate::save_pem_file(const std::string& path) const {
 
 bool Certificate::load_der_file(const std::string& path)
 {
-    FILE* f = fopen(path.c_str(), "rb");
+    auto full_path = cpp::utils::full_resolve_path(path);
+    if(!cpp::utils::file_exists(full_path))
+        return false;
+    FILE* f = fopen(full_path.c_str(), "rb");
     if (!f) return false;
 
     X509* cert = d2i_X509_fp(f, nullptr);
@@ -163,7 +176,8 @@ bool Certificate::save_der_file(const std::string& path) const
 {
     if (!cert_) return false;
 
-    FILE* f = fopen(path.c_str(), "wb");
+    auto full_path = cpp::utils::full_resolve_path(path);
+    FILE* f = fopen(full_path.c_str(), "wb");
     if (!f) return false;
 
     int ret = i2d_X509_fp(f, cert_);
