@@ -36,8 +36,8 @@ namespace cpp {
     }
 }
 
-#define __METHOD_NAME__         utils::methodName(__PRETTY_FUNCTION__)
-#define __CLASS_NAME__          utils::className(__PRETTY_FUNCTION__)
+#define __METHOD_NAME__         cpp::utils::methodName(__PRETTY_FUNCTION__)
+#define __CLASS_NAME__          cpp::utils::className(__PRETTY_FUNCTION__)
 
 #define __METHOD_NAME_CSTR__    __METHOD_NAME__.c_str()
 #define __CLASS_NAME_CSTR__     __CLASS_NAME__.c_str()
