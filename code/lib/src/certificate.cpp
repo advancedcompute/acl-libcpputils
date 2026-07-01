@@ -111,9 +111,9 @@ bool Certificate::load_from_pem(const std::string& pem, PasswordCallback cb)
 
 bool Certificate::load_pem_file(const std::string& path)
 {
+    //printf("path: %s\n", path.c_str());
     auto full_path = cpp::utils::full_resolve_path(path);
-    if(!cpp::utils::file_exists(full_path))
-        return false;
+    //printf("full_path: %s\n", full_path.c_str());
 
     FILE* f = fopen(full_path.c_str(), "rb");
     if (!f) return false;
@@ -130,8 +130,7 @@ bool Certificate::load_pem_file(const std::string& path)
 bool Certificate::load_pem_file(const std::string& path, PasswordCallback cb)
 {
     auto full_path = cpp::utils::full_resolve_path(path);
-    if(!cpp::utils::file_exists(full_path))
-        return false;
+    
     FILE* f = fopen(full_path.c_str(), "rb");
     if (!f) return false;
 
@@ -157,8 +156,6 @@ bool Certificate::save_pem_file(const std::string& path) const {
 bool Certificate::load_der_file(const std::string& path)
 {
     auto full_path = cpp::utils::full_resolve_path(path);
-    if(!cpp::utils::file_exists(full_path))
-        return false;
     FILE* f = fopen(full_path.c_str(), "rb");
     if (!f) return false;
 
