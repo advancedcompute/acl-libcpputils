@@ -1,6 +1,6 @@
 
 #include "rsa_tests.h"
-#include "rsa.h"
+#include "../../../../../dep/android/openssl/arm64-v8a/include/openssl/rsa.h"
 #include "file.h"
 
 #include <iostream>

@@ -194,7 +194,7 @@ std::string Certificate::subject_dn() const
 {
     if (!cert_) return "";
 
-    X509_NAME* name = X509_get_subject_name(cert_);
+    auto* name = X509_get_subject_name(cert_);
     if (!name) return "";
 
     BIO* bio = BIO_new(BIO_s_mem());
@@ -286,16 +286,16 @@ bool Certificate::get_common_name(std::string& cn) const
     cn.clear();
     if (!cert_) return false;
 
-    X509_NAME* subj = X509_get_subject_name(cert_);
+    auto* subj = X509_get_subject_name(cert_);
     if (!subj) return false;
 
     int idx = X509_NAME_get_index_by_NID(subj, NID_commonName, -1);
     if (idx < 0) return false;
 
-    X509_NAME_ENTRY* entry = X509_NAME_get_entry(subj, idx);
+    auto* entry = X509_NAME_get_entry(subj, idx);
     if (!entry) return false;
 
-    ASN1_STRING* data = X509_NAME_ENTRY_get_data(entry);
+    auto* data = X509_NAME_ENTRY_get_data(entry);
     if (!data) return false;
 
     unsigned char* utf8 = nullptr;
@@ -442,8 +442,10 @@ std::string Certificate::get_ocsp_url() const
         {
             if (ad->location->type == GEN_URI)
             {
-                ASN1_IA5STRING* uri = ad->location->d.uniformResourceIdentifier;
-                url.assign((char*)uri->data, uri->length);
+                auto* uri = ad->location->d.uniformResourceIdentifier;
+                url.assign(
+                        reinterpret_cast<const char*>(ASN1_STRING_get0_data(uri)),
+                        ASN1_STRING_length(uri));
                 break;
             }
         }
@@ -460,17 +462,17 @@ std::string Certificate::get_ocsp_url() const
 time_t Certificate::ASN1_TIME_get(const ASN1_TIME* time)
 {
     struct tm t;
-    const char* str = (const char*) time->data;
+    const char* str = reinterpret_cast<const char*>(ASN1_STRING_get0_data(time));
     size_t i = 0;
 
     memset(&t, 0, sizeof(t));
 
-    if (time->type == V_ASN1_UTCTIME) {/* two digit year */
+    if (ASN1_STRING_type(time) == V_ASN1_UTCTIME) {/* two digit year */
         t.tm_year = (str[i++] - '0') * 10;
         t.tm_year += (str[i++] - '0');
         if (t.tm_year < 70)
             t.tm_year += 100;
-    } else if (time->type == V_ASN1_GENERALIZEDTIME) {/* four digit year */
+    } else if (ASN1_STRING_type(time) == V_ASN1_GENERALIZEDTIME) {/* four digit year */
         t.tm_year = (str[i++] - '0') * 1000;
         t.tm_year+= (str[i++] - '0') * 100;
         t.tm_year+= (str[i++] - '0') * 10;

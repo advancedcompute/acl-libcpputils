@@ -3,8 +3,8 @@
 */
 
 #include "certificate_builder.h"
-#include "rsa.h"
 #include "ecc.h"
+#include "rsa.h"
 
 #include <openssl/pem.h>
 #include <openssl/evp.h>

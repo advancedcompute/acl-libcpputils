@@ -1,7 +1,7 @@
 
 #include "certificate_builder_tests.h"
 #include "certificate_builder.h"
-#include "rsa.h"
+#include "../../../../../dep/android/openssl/arm64-v8a/include/openssl/rsa.h"
 #include "ecc.h"
 
 #include <iostream>
