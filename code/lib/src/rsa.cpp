@@ -153,9 +153,10 @@ namespace cpp {
 
         bool RSA::import_private_key(const std::string& fpath) {
             bool success = false;
-            if (file_exists(fpath)) {
+            auto fullpath = full_resolve_path(fpath);
+            if (file_exists(fullpath)) {
                 BIO* bio = BIO_new(BIO_s_file());
-                if (BIO_read_filename(bio, fpath.c_str()) > 0) {
+                if (BIO_read_filename(bio, fullpath.c_str()) > 0) {
                     auto * pkey = PEM_read_bio_PrivateKey(bio, nullptr, nullptr, nullptr);
 
                     if (pkey != nullptr) {
@@ -171,9 +172,10 @@ namespace cpp {
 
         bool RSA::import_private_key(const std::string& fpath, PasswordCallback cb) {
             bool success = false;
-            if (file_exists(fpath)) {
+            auto fullpath = full_resolve_path(fpath);
+            if (file_exists(fullpath)) {
                 BIO* bio = BIO_new(BIO_s_file());
-                if (BIO_read_filename(bio, fpath.c_str()) > 0) {
+                if (BIO_read_filename(bio, fullpath.c_str()) > 0) {
                     PasswordCallbackWrapper wrapper{cb};
                     auto * pkey = PEM_read_bio_PrivateKey(bio, nullptr, openssl_password_cb, &wrapper);
 

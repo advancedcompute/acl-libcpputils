@@ -70,8 +70,14 @@ namespace cpp { namespace utils {
     }
 
     bool file_exists(const std::string& fpath) {
-        auto full_fpath = full_resolve_path(fpath);
-        return fs::exists(full_fpath) && (fs::is_regular_file(full_fpath) || fs::is_character_file(full_fpath));
+        auto givenpath = std::filesystem::path(fpath);
+
+        if(givenpath.is_absolute()) {
+            return fs::exists(givenpath) && (fs::is_regular_file(givenpath) || fs::is_character_file(givenpath));
+        } else {
+            auto full_fpath = full_resolve_path(givenpath);
+            return fs::exists(full_fpath) && (fs::is_regular_file(full_fpath) || fs::is_character_file(full_fpath));
+        }
     }
 
     bool directory_exists(const std::string& fpath) {
@@ -81,14 +87,11 @@ namespace cpp { namespace utils {
 
     bool create_directories(const std::string& fpath)
     {
-        auto path = full_resolve_path(fpath);
-        if ( fs::is_regular_file(path) || fs::is_character_file(path)  )
-        {
-            return fs::create_directories(path.parent_path());
-        } else if ( fs::is_directory(path)  )
-        {
-            return fs::create_directories(path);
-        }
+        auto full_fpath = full_resolve_path(fpath);
+        if(fs::exists(full_fpath)) {
+            if(fs::is_directory(full_fpath)) return true;
+        } else
+            return fs::create_directories(fpath);
         return false;
     }
 
