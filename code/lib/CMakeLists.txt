@@ -37,8 +37,10 @@ if(ANDROID)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
     target_include_directories(${PROJECT_NAME} PRIVATE ${OPENSSL_INCLUDE_DIR})
     target_link_libraries(${PROJECT_NAME} PRIVATE
-        OpenSSL::Crypto
-        OpenSSL::SSL
+        #OpenSSL::Crypto
+        #OpenSSL::SSL
+        ${OPENSSL_SSL_LIBRARY}
+        ${OPENSSL_CRYPTO_LIBRARY}
         jsoncpp_lib)
 else()
     message(STATUS "Building cpputils for desktop")

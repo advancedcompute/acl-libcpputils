@@ -16,7 +16,7 @@ if(ANDROID)
 
     set(OPENSSL_SSL_LIBRARY
         "${OPENSSL_ROOT_DIR}/libssl.so"
-        CACHE FILEPATH "OpenSSL crypto library"
+        CACHE FILEPATH "OpenSSL ssl library"
     )
 
     set(OPENSSL_CRYPTO_LIBRARY
@@ -28,6 +28,33 @@ else()
 endif()
 
 find_package(OpenSSL REQUIRED)
+
+
+
+get_property(allTargets GLOBAL PROPERTY TARGETS)
+message(STATUS "Targets:")
+foreach(t ${allTargets})
+    if(t MATCHES "OpenSSL")
+        message(STATUS "  ${t}")
+    endif()
+endforeach()
+
+
+
+message(STATUS "OpenSSL_FOUND=${OpenSSL_FOUND}")
+
+message(STATUS "CMake version: ${CMAKE_VERSION}")
+message(STATUS "OpenSSL version: ${OPENSSL_VERSION}")
+message(STATUS "CMAKE_MODULE_PATH=${CMAKE_MODULE_PATH}")
+
+
+
+
+#if(TARGET OpenSSL::Crypto)
+#    message(STATUS "Found OpenSSL::Crypto")
+#else()
+#    message(FATAL_ERROR "No OpenSSL::Crypto target")
+#endif()
 
 
 #
