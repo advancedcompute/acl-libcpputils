@@ -88,10 +88,14 @@ namespace cpp { namespace utils {
     bool create_directories(const std::string& fpath)
     {
         auto full_fpath = full_resolve_path(fpath);
-        if(fs::exists(full_fpath)) {
-            if(fs::is_directory(full_fpath)) return true;
-        } else
-            return fs::create_directories(fpath);
+        try {
+            if(fs::exists(full_fpath)) {
+                if(fs::is_directory(full_fpath)) return true;
+            } else
+                return fs::create_directories(fpath);
+        } catch(std::exception& ex) {
+            puts(ex.what());
+        }
         return false;
     }
 
