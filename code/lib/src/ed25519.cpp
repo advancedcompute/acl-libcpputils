@@ -281,7 +281,7 @@ bool ED25519::export_private_key(const std::string& path)
 {
     if(!ed25519_key_) return false;
 
-    auto fullpath = full_resolve_path(path);
+    auto fullpath = resolve_path(path);
     FILE* f = fopen(fullpath.c_str(), "wb");
     if(!f) return false;
     bool ok = PEM_write_PrivateKey(f, ed25519_key_, nullptr, nullptr, 0, nullptr, nullptr);
@@ -293,7 +293,7 @@ bool ED25519::export_private_key(const std::string& path, PasswordCallback cb)
 {
     if(!ed25519_key_) return false;
 
-    auto fullpath = full_resolve_path(path);
+    auto fullpath = resolve_path(path);
     FILE* f = fopen(fullpath.c_str(), "wb");
     if(!f) return false;
 
@@ -307,7 +307,7 @@ bool ED25519::export_public_key(const std::string& path)
 {
     if(!ed25519_key_) return false;
 
-    auto fullpath = full_resolve_path(path);
+    auto fullpath = resolve_path(path);
     FILE* f = fopen(fullpath.c_str(), "wb");
     if(!f) return false;
     bool ok = PEM_write_PUBKEY(f, ed25519_key_);
@@ -317,7 +317,7 @@ bool ED25519::export_public_key(const std::string& path)
 
 bool ED25519::import_private_key(const std::string& path)
 {
-    auto fullpath = full_resolve_path(path);
+    auto fullpath = resolve_path(path);
     FILE* f = fopen(fullpath.c_str(), "rb");
     if(!f) return false;
     EVP_PKEY* key = PEM_read_PrivateKey(f, nullptr, nullptr, nullptr);
@@ -330,7 +330,7 @@ bool ED25519::import_private_key(const std::string& path)
 
 bool ED25519::import_private_key(const std::string& path, PasswordCallback cb)
 {
-    auto fullpath = full_resolve_path(path);
+    auto fullpath = resolve_path(path);
     FILE* f = fopen(fullpath.c_str(), "rb");
     if(!f) return false;
 
@@ -345,7 +345,7 @@ bool ED25519::import_private_key(const std::string& path, PasswordCallback cb)
 
 bool ED25519::import_public_key(const std::string& path)
 {
-    auto fullpath = full_resolve_path(path);
+    auto fullpath = resolve_path(path);
     FILE* f = fopen(fullpath.c_str(), "rb");
     if(!f) return false;
     EVP_PKEY* key = PEM_read_PUBKEY(f, nullptr, nullptr, nullptr);

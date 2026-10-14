@@ -34,7 +34,7 @@ file(GLOB PROJECT_SRC_FILESET
 add_executable(${PROJECT_NAME} ${PROJECT_SRC_FILESET})
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_INC_DIR} ${PROJECT_LIB_ROOT_DIR}/include)
-target_link_libraries(${PROJECT_NAME} PUBLIC cpputils -ljsoncpp)
+target_link_libraries(${PROJECT_NAME} PUBLIC cpputils -ljsoncpp -lzip)
 
 ########################
 ## Post build tasks ##

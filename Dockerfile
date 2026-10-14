@@ -3,7 +3,7 @@ FROM ubuntu:22.04
 RUN apt-get update && apt-get install -y \
     build-essential cmake git pkg-config \
     curl libjsoncpp-dev libjsonrpccpp-dev \
-    libssl-dev  \
+    libssl-dev libzip-dev  \
     libpq-dev libpqxx-dev
 
 WORKDIR /app

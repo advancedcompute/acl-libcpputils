@@ -18,7 +18,7 @@ file(GLOB PROJECT_SRC_FILESET
     ${PROJECT_SRC_DIR}/*.cpp)
 
 if(UNIX)
-    set(LIBS_LINK -lssl -lcrypto -luuid -lstdc++fs)
+    set(LIBS_LINK -lssl -lcrypto -luuid -lstdc++fs -lzip)
 endif(UNIX)
 
 if(WIN32)
